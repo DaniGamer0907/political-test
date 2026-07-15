@@ -12,6 +12,13 @@ create table if not exists public.participantes (
   fecha timestamptz not null default now()
 );
 
+-- Migration helper for projects where participantes was created before user_id existed.
+alter table public.participantes
+add column if not exists user_id uuid default auth.uid() references auth.users(id) on delete cascade;
+
+alter table public.participantes
+alter column user_id set not null;
+
 create table if not exists public.preguntas (
   id uuid primary key default gen_random_uuid(),
   texto text not null,

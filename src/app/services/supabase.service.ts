@@ -28,7 +28,9 @@ export class SupabaseService {
   }
 
   async crearParticipante(nombre: string, edad?: number): Promise<string> {
+    const userId = await this.ensureUserId();
     const participante = {
+      user_id: userId,
       nombre,
       ...(edad === undefined ? {} : { edad }),
     };
@@ -87,5 +89,30 @@ export class SupabaseService {
 
   private throwSupabaseError(message: string, error: PostgrestError): never {
     throw new Error(`${message}: ${error.message}`);
+  }
+
+  private async ensureUserId(): Promise<string> {
+    const { data: sessionData } = await this.supabase.auth.getSession();
+
+    if (sessionData.session?.user.id) {
+      return sessionData.session.user.id;
+    }
+
+    const { data: signInData, error: signInError } = await this.supabase.auth.signInAnonymously();
+
+    if (signInError) {
+      throw new Error(
+        'No hay sesión de Supabase y no se pudo crear una sesión anónima. ' +
+          'Habilita Anonymous Sign-Ins en Supabase Auth o inicia sesión antes de comenzar.'
+      );
+    }
+
+    const anonymousUserId = signInData.user?.id;
+
+    if (!anonymousUserId) {
+      throw new Error('No se pudo obtener el user_id de Supabase.');
+    }
+
+    return anonymousUserId;
   }
 }
