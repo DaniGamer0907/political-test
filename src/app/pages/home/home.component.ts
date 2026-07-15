@@ -1,0 +1,33 @@
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { LandingComponent } from '../../components/landing/landing.component';
+
+@Component({
+  selector: 'app-home-page',
+  standalone: true,
+  imports: [LandingComponent, RouterLink],
+  template: `
+    <section class="grid gap-8 lg:grid-cols-[1.3fr_0.7fr]">
+      <app-landing />
+
+      <aside class="rounded-3xl border border-white/10 bg-white/5 p-8">
+        <p class="text-xs font-semibold uppercase tracking-[0.4em] text-sky-300">Flujo</p>
+        <div class="mt-6 grid gap-4 text-sm text-slate-300">
+          <p>1. Home</p>
+          <p>2. Test</p>
+          <p>3. Result</p>
+        </div>
+
+        <a
+          routerLink="/test"
+          class="mt-8 inline-flex rounded-full bg-emerald-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300"
+        >
+          Ir al test
+        </a>
+      </aside>
+    </section>
+  `,
+  styles: [],
+})
+export class HomeComponent {}

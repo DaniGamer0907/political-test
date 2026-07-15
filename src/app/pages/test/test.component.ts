@@ -1,0 +1,41 @@
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+
+import { ProgressBarComponent } from '../../components/progress-bar/progress-bar.component';
+import { QuestionCardComponent } from '../../components/question-card/question-card.component';
+
+@Component({
+  selector: 'app-test-page',
+  standalone: true,
+  imports: [ProgressBarComponent, QuestionCardComponent, RouterLink],
+  template: `
+    <section class="grid gap-6">
+      <app-progress-bar />
+
+      <app-question-card>
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-amber-300">Test</p>
+        <h2 class="mt-3 text-2xl font-semibold text-white">Estructura lista para cargar preguntas</h2>
+        <p class="mt-3 text-sm leading-6 text-slate-300">
+          Aquí se conectará el motor de preguntas y la captura de respuestas por ejes X/Y.
+        </p>
+      </app-question-card>
+
+      <div class="flex gap-3">
+        <a
+          routerLink="/home"
+          class="rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-white/30 hover:bg-white/5"
+        >
+          Volver
+        </a>
+        <a
+          routerLink="/result"
+          class="rounded-full bg-sky-400 px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-sky-300"
+        >
+          Ver resultado
+        </a>
+      </div>
+    </section>
+  `,
+  styles: [],
+})
+export class TestComponent {}
