@@ -46,8 +46,20 @@ type RespuestaLocal = {
         <app-question-card
           [pregunta]="pregunta"
           [questionNumber]="preguntaActualNumero()"
+          [selectedValue]="valorRespuestaActual()"
           (answered)="responder($event)"
         />
+
+        <div class="flex justify-start">
+          <button
+            type="button"
+            [disabled]="indiceActual() === 0 || guardando()"
+            (click)="preguntaAnterior()"
+            class="rounded-md border border-white/15 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:border-white/30 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Anterior
+          </button>
+        </div>
 
         @if (guardando()) {
           <p class="text-center text-sm text-zinc-300">Guardando resultado...</p>
@@ -75,6 +87,8 @@ export class TestComponent implements OnInit {
 
   readonly preguntaActual = computed(() => this.preguntas()[this.indiceActual()] ?? null);
   readonly preguntaActualNumero = computed(() => this.indiceActual() + 1);
+  readonly respuestaActual = computed(() => this.respuestas()[this.indiceActual()] ?? null);
+  readonly valorRespuestaActual = computed<RespuestaValor | null>(() => this.respuestaActual()?.valor ?? null);
 
   async ngOnInit(): Promise<void> {
     if (!this.testState.participanteId()) {
@@ -83,7 +97,8 @@ export class TestComponent implements OnInit {
     }
 
     try {
-      this.preguntas.set(await this.supabaseService.getPreguntas());
+      const preguntas = await this.supabaseService.getPreguntas();
+      this.preguntas.set(this.mezclarPreguntas(preguntas));
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : 'No se pudieron cargar las preguntas.');
     } finally {
@@ -116,6 +131,26 @@ export class TestComponent implements OnInit {
     }
 
     await this.finalizarTest();
+  }
+
+  preguntaAnterior(): void {
+    if (this.indiceActual() > 0 && !this.guardando()) {
+      this.indiceActual.update((indice) => indice - 1);
+    }
+  }
+
+  private mezclarPreguntas(preguntas: Pregunta[]): Pregunta[] {
+    const mezcladas = [...preguntas];
+
+    for (let indice = mezcladas.length - 1; indice > 0; indice -= 1) {
+      const indiceAleatorio = Math.floor(Math.random() * (indice + 1));
+      [mezcladas[indice], mezcladas[indiceAleatorio]] = [
+        mezcladas[indiceAleatorio],
+        mezcladas[indice],
+      ];
+    }
+
+    return mezcladas;
   }
 
   private async finalizarTest(): Promise<void> {

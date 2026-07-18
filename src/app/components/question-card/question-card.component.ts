@@ -31,11 +31,12 @@ const LIKERT_OPTIONS: LikertOption[] = [
           <button
             type="button"
             (click)="answered.emit(option.value)"
+            [class.border-emerald-300]="selectedValue() === option.value"
+            [class.bg-emerald-100]="selectedValue() === option.value"
+            [class.ring-4]="selectedValue() === option.value"
+            [class.ring-emerald-300\/25]="selectedValue() === option.value"
             class="min-h-12 rounded-md border border-white/10 bg-white px-4 py-3 text-left text-sm font-semibold text-zinc-950 transition hover:border-emerald-300 hover:bg-emerald-50 focus:outline-none focus:ring-4 focus:ring-emerald-300/25 sm:text-base"
           >
-            <span class="mr-3 inline-flex h-7 w-7 items-center justify-center rounded-full bg-zinc-900 text-xs text-white">
-              {{ option.value }}
-            </span>
             {{ option.label }}
           </button>
         }
@@ -47,6 +48,7 @@ const LIKERT_OPTIONS: LikertOption[] = [
 export class QuestionCardComponent {
   readonly pregunta = input.required<Pregunta>();
   readonly questionNumber = input.required<number>();
+  readonly selectedValue = input<RespuestaValor | null>(null);
   readonly answered = output<RespuestaValor>();
 
   protected readonly options = LIKERT_OPTIONS;
