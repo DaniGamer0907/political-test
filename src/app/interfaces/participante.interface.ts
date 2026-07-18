@@ -1,7 +1,14 @@
 export interface Participante {
   id: string;
   user_id: string;
-  nombre: string;
-  edad?: number | null;
+  codigo: string;
+  rango_edad: string;
+  genero: string;
+  comunidades: string[];
+  escuela: string;
+  programa: string;
+  nivel_socioeconomico: number;
+  ideologia: string;
+  ideologia_otro?: string | null;
   fecha: string;
 }

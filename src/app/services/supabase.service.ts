@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { createClient, PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 
 import { environment } from '../../environments/environment';
-import { Pregunta, Respuesta, RespuestaValor, Resultado } from '../interfaces';
+import { Participante, Pregunta, Respuesta, RespuestaValor, Resultado } from '../interfaces';
 
 type NuevaRespuesta = Pick<Respuesta, 'pregunta_id' | 'valor'>;
 type NuevoResultado = Pick<Resultado, 'x' | 'y' | 'categoria'>;
+type NuevoParticipante = Omit<Participante, 'id' | 'user_id' | 'fecha'>;
 
 @Injectable({
   providedIn: 'root',
@@ -27,12 +28,11 @@ export class SupabaseService {
     return data ?? [];
   }
 
-  async crearParticipante(nombre: string, edad?: number): Promise<string> {
+  async crearParticipante(datos: NuevoParticipante): Promise<string> {
     const userId = await this.ensureUserId();
     const participante = {
       user_id: userId,
-      nombre,
-      ...(edad === undefined ? {} : { edad }),
+      ...datos,
     };
 
     const { data, error } = await this.supabase.from('participantes').insert(participante).select('id').single();

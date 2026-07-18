@@ -7,8 +7,15 @@ create extension if not exists "pgcrypto";
 create table if not exists public.participantes (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  nombre text not null,
-  edad integer check (edad is null or edad >= 0),
+  codigo text not null,
+  rango_edad text not null check (rango_edad in ('18-21', '22-25', '26-30', 'Más de 30')),
+  genero text not null,
+  comunidades text[] not null default '{}',
+  escuela text not null,
+  programa text not null,
+  nivel_socioeconomico integer not null check (nivel_socioeconomico between 1 and 6),
+  ideologia text not null,
+  ideologia_otro text,
   fecha timestamptz not null default now()
 );
 
@@ -18,6 +25,8 @@ add column if not exists user_id uuid default auth.uid() references auth.users(i
 
 alter table public.participantes
 alter column user_id set not null;
+
+-- Si la tabla ya existía con nombre/edad, ejecutar una migración manual antes de usar el formulario nuevo.
 
 create table if not exists public.preguntas (
   id uuid primary key default gen_random_uuid(),
